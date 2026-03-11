@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Satisfactory — Plan de Production Détaillé</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0e1117;
+  --bg2: #161b22;
+  --bg3: #1c2128;
+  --border: #30363d;
+  --text: #c9d1d9;
+  --muted: #6e7681;
+  --f1: #f5a623;
+  --f2: #ff4757;
+  --f3: #2ed573;
+  --pure: #00e5ff;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* NAV */
+nav {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: sticky; top: 0; z-index: 50;
+}
+nav .brand {
+  font-weight: 700;
+  color: #f5a623;
+  font-size: 1rem;
+  padding: 14px 20px 14px 0;
+  border-right: 1px solid var(--border);
+  margin-right: 8px;
+  white-space: nowrap;
+}
+nav .tab {
+  padding: 14px 18px;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+nav .tab:hover { color: var(--text); }
+nav .tab.active { color: var(--text); border-bottom-color: var(--f1); }
+
+/* MAIN */
+main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 60px; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* HERO BANNER */
+.hero {
+  background: linear-gradient(135deg, #1c2128, #161b22);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  display: flex; gap: 32px; flex-wrap: wrap; align-items: center;
+}
+.hero h1 { font-size: 1.5rem; color: #fff; margin-bottom: 4px; }
+.hero p { color: var(--muted); font-size: 0.875rem; max-width: 500px; }
+.hero-stats { display: flex; gap: 20px; flex-wrap: wrap; margin-left: auto; }
+.stat { text-align: center; }
+.stat .val { font-size: 1.6rem; font-weight: 700; color: var(--f1); }
+.stat .lbl { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+
+/* PHASE TIMELINE */
+.timeline {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.phase-step {
+  flex: 1;
+  padding: 14px 16px;
+  border-right: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .15s;
+}
+.phase-step:last-child { border-right: none; }
+.phase-step:hover { background: var(--bg3); }
+.phase-step.active { background: var(--bg3); }
+.phase-step .num {
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--muted); margin-bottom: 4px;
+}
+.phase-step .name { font-weight: 600; font-size: 0.9rem; color: #fff; }
+.phase-step .sub { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.phase-step.done .name { color: #3fb950; }
+.phase-step.done::before { content: '✓ '; color: #3fb950; }
+
+/* FACTORY SECTIONS */
+.factory-section {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.factory-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.factory-header:hover { background: var(--bg3); }
+.factory-badge {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  border: 2px solid var(--fcolor);
+  background: rgba(255,255,255,0.03);
+  flex-shrink: 0;
+}
+.factory-info { flex: 1; }
+.factory-info h2 { font-size: 1rem; color: #fff; margin-bottom: 2px; }
+.factory-info .meta { font-size: 0.75rem; color: var(--muted); }
+.factory-header .chevron { color: var(--muted); transition: transform .2s; font-size: 0.8rem; }
+.factory-header.open .chevron { transform: rotate(180deg); }
+.factory-body { display: none; padding: 20px; }
+.factory-body.open { display: block; }
+
+/* GRIDS */
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; }
+@media(max-width: 700px) { .grid3,.grid2 { grid-template-columns: 1fr; } }
+
+/* METRIC CARDS */
+.metric-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.metric-card .card-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+.metric-card .card-val { font-size: 1.3rem; font-weight: 700; color: var(--fcolor); }
+.metric-card .card-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+
+/* MACHINE TABLE */
+.machine-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 20px; }
+.machine-table th {
+  text-align: left; padding: 8px 12px;
+  background: var(--bg3);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  border-bottom: 1px solid var(--border);
+}
+.machine-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid rgba(48,54,61,0.5);
+  vertical-align: middle;
+}
+.machine-table tr:last-child td { border-bottom: none; }
+.machine-table tr:hover td { background: var(--bg3); }
+.machine-table .count {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--fcolor);
+  width: 48px;
+}
+.machine-table .machine-name { color: #fff; }
+.machine-table .machine-recipe { color: var(--muted); font-size: 0.75rem; font-family: monospace; }
+.machine-table .rate { color: #3fb950; font-family: monospace; font-size: 0.8rem; }
+.machine-table .checkbox { width: 32px; text-align: center; }
+.machine-table input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--fcolor); cursor: pointer; }
+.machine-table tr.checked td { opacity: 0.45; }
+.machine-table tr.checked .machine-name { text-decoration: line-through; }
+
+/* FLOW DIAGRAM */
+.flow { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+.flow-node {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  color: #fff;
+  text-align: center;
+  min-width: 90px;
+}
+.flow-node .rate { font-size: 0.65rem; color: var(--fcolor); font-family: monospace; display: block; margin-top: 2px; }
+.flow-arrow { color: var(--muted); font-size: 1rem; }
+.flow-node.raw { border-color: #555; color: var(--muted); }
+.flow-node.final { border-color: var(--fcolor); background: rgba(255,255,255,0.05); }
+
+/* TIPS */
+.tip {
+  background: rgba(88,166,255,0.08);
+  border: 1px solid rgba(88,166,255,0.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.82rem;
+  color: #a8c8f0;
+  margin-bottom: 14px;
+}
+.tip strong { color: #58a6ff; }
+
+.warn {
+  background: rgba(245,166,35,0.08);
+  border: 1px solid rgba(245,166,35,0.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.82rem;
+  color: #d4a853;
+  margin-bottom: 14px;
+}
+.warn strong { color: var(--f1); }
+
+/* CHECKLIST */
+.checklist { list-style: none; }
+.checklist li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(48,54,61,0.4);
+  font-size: 0.82rem;
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist li input { margin-top: 2px; accent-color: #3fb950; flex-shrink: 0; }
+.checklist .cl-label { flex: 1; }
+.checklist .cl-tag {
+  font-size: 0.65rem; padding: 2px 7px;
+  border-radius: 10px; font-weight: 600;
+  white-space: nowrap;
+}
+.tag-now { background: rgba(63,185,80,0.15); color: #3fb950; border: 1px solid rgba(63,185,80,0.3); }
+.tag-soon { background: rgba(245,166,35,0.12); color: var(--f1); border: 1px solid rgba(245,166,35,0.25); }
+.tag-later { background: rgba(110,118,129,0.15); color: var(--muted); border: 1px solid var(--border); }
+
+/* PROGRESS */
+.progress-wrap { margin-top: 6px; }
+.progress-bar-bg { background: var(--bg3); border-radius: 4px; height: 6px; overflow: hidden; }
+.progress-bar-fill { height: 100%; border-radius: 4px; background: var(--fcolor); transition: width .3s; }
+.progress-label { font-size: 0.7rem; color: var(--muted); margin-top: 3px; }
+
+/* OVERVIEW CARDS */
+.overview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+@media(max-width:700px) { .overview-grid { grid-template-columns: 1fr; } }
+.overview-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  border-top: 3px solid var(--fc);
+}
+.overview-card h3 { font-size: 0.95rem; color: #fff; margin-bottom: 10px; }
+.overview-card .oc-stat { display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.8rem; border-bottom: 1px solid rgba(48,54,61,0.4); }
+.overview-card .oc-stat:last-child { border-bottom: none; }
+.overview-card .oc-stat .oc-val { color: var(--fc); font-family: monospace; font-weight: 600; }
+
+/* SECTION TITLE */
+.section-title {
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--muted); margin-bottom: 12px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* BADGES */
+.badge { display: inline-block; font-size: 0.65rem; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+.badge-phase1 { background: rgba(63,185,80,0.15); color: #3fb950; }
+.badge-phase2 { background: rgba(245,166,35,0.12); color: var(--f1); }
+.badge-optional { background: rgba(110,118,129,0.1); color: var(--muted); }
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">🏭 Satisfactory Plan</div>
+  <div class="tab active" onclick="switchTab('overview')">Vue d'ensemble</div>
+  <div class="tab" onclick="switchTab('f1')">F1 — Starter</div>
+  <div class="tab" onclick="switchTab('f2')">F2 — Power</div>
+  <div class="tab" onclick="switchTab('f3')">F3 — Acier</div>
+  <div class="tab" onclick="switchTab('checklist')">Checklist</div>
+</nav>
+
+<main>
+
+<!-- ==================== OVERVIEW ==================== -->
+<div class="page active" id="page-overview">
+  <div class="hero">
+    <div>
+      <h1>Plan Early Game — 3 Factories</h1>
+      <p>Analyse trigonométrique complète · 1 fondation = 8m · Optimisé pour minimiser les distances logistiques</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="val">3</div><div class="lbl">Factories</div></div>
+      <div class="stat"><div class="val">600MW</div><div class="lbl">Puissance max</div></div>
+      <div class="stat"><div class="val">63</div><div class="lbl">Machines F1</div></div>
+      <div class="stat"><div class="val">~2km</div><div class="lbl">Circuit total</div></div>
+    </div>
+  </div>
+
+  <!-- ====== MAP INTERACTIVE ====== -->
+  <div class="section-title">🗺️ Carte interactive — Positionnement des factories</div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px;position:relative;">
+    <div style="display:flex;gap:0;height:520px;">
+      <canvas id="worldMap" style="flex:1;display:block;cursor:crosshair;"></canvas>
+      <div id="mapSidebar" style="width:220px;background:var(--bg3);border-left:1px solid var(--border);overflow-y:auto;padding:14px;font-size:0.78rem;flex-shrink:0;">
+        <div style="color:var(--muted);font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Infos du nœud</div>
+        <div id="nodeInfo" style="color:var(--muted);font-style:italic;">Survole un élément sur la carte</div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
+        <div style="color:var(--muted);font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Légende</div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;align-items:center;gap:8px;"><span style="width:12px;height:12px;border-radius:50%;background:#ff6b35;border:2px solid #ff6b35;flex-shrink:0;display:inline-block;"></span><span>Ressource normale</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><span style="width:12px;height:12px;border-radius:50%;background:#1a1a2e;border:2px solid #00e5ff;flex-shrink:0;display:inline-block;"></span><span style="color:#00e5ff;">Ressource pure</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><span style="width:12px;height:12px;border-radius:4px;background:#f5a62355;border:2px solid #f5a623;flex-shrink:0;display:inline-block;"></span><span style="color:#f5a623;">F1 — Starter</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><span style="width:12px;height:12px;border-radius:4px;background:#ff475755;border:2px solid #ff4757;flex-shrink:0;display:inline-block;"></span><span style="color:#ff4757;">F2 — Power</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><span style="width:12px;height:12px;border-radius:4px;background:#2ed57355;border:2px solid #2ed573;flex-shrink:0;display:inline-block;"></span><span style="color:#2ed573;">F3 — Hub Acier</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:22px;height:2px;background:#ff4757;flex-shrink:0;border-radius:1px;"></div><span>Circuit logistique</span></div>
+          <div style="display:flex;align-items:center;gap:8px;"><div style="width:22px;height:2px;background:#ffffff44;flex-shrink:0;border-radius:1px;border-top:1px dashed #888;"></div><span>Mesure (original)</span></div>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
+        <div style="color:var(--muted);font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Calques</div>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-bottom:5px;"><input type="checkbox" id="layerMeasures" checked style="accent-color:#f5a623;"> Mesures originales</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-bottom:5px;"><input type="checkbox" id="layerCircuit" checked style="accent-color:#ff4757;"> Circuit logistique</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="checkbox" id="layerLabels" checked style="accent-color:#2ed573;"> Labels</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="overview-grid">
+    <div class="overview-card" style="--fc: var(--f1)">
+      <h3>⚙️ F1 — Starter Hub SW</h3>
+      <div class="oc-stat"><span>Position</span><span class="oc-val">0m, 0m (ref)</span></div>
+      <div class="oc-stat"><span>Iron Ore</span><span class="oc-val">360/min</span></div>
+      <div class="oc-stat"><span>Copper Ore</span><span class="oc-val">360/min</span></div>
+      <div class="oc-stat"><span>Limestone</span><span class="oc-val">180/min</span></div>
+      <div class="oc-stat"><span>Output principal</span><span class="oc-val">RIP + Cable</span></div>
+      <div class="oc-stat"><span>Total machines</span><span class="oc-val">63</span></div>
+    </div>
+    <div class="overview-card" style="--fc: var(--f2)">
+      <h3>⚡ F2 — Power Station SE</h3>
+      <div class="oc-stat"><span>Position</span><span class="oc-val">+720m, +147m</span></div>
+      <div class="oc-stat"><span>Distance F1</span><span class="oc-val">735m / 91,9f</span></div>
+      <div class="oc-stat"><span>Coal Pur ×3</span><span class="oc-val">360/min</span></div>
+      <div class="oc-stat"><span>Coal Generators</span><span class="oc-val">8 units</span></div>
+      <div class="oc-stat"><span>Power output</span><span class="oc-val">600 MW</span></div>
+      <div class="oc-stat"><span>Water Extractors</span><span class="oc-val">3-4 units</span></div>
+    </div>
+    <div class="overview-card" style="--fc: var(--f3)">
+      <h3>🔩 F3 — Hub Acier Centre-Sud</h3>
+      <div class="oc-stat"><span>Position</span><span class="oc-val">+350m, -150m</span></div>
+      <div class="oc-stat"><span>Distance F1</span><span class="oc-val">441m / 55,1f</span></div>
+      <div class="oc-stat"><span>Distance Coal E</span><span class="oc-val">427m / 53,4f</span></div>
+      <div class="oc-stat"><span>Caterium Pur</span><span class="oc-val">62m / 7,8f</span></div>
+      <div class="oc-stat"><span>Steel Ingots</span><span class="oc-val">~40/min</span></div>
+      <div class="oc-stat"><span>Score hub</span><span class="oc-val">9747 (optimal)</span></div>
+    </div>
+  </div>
+
+  <div class="section-title">📦 Flux de production global</div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:24px;">
+    <div style="margin-bottom:16px">
+      <div class="flow">
+        <div class="flow-node raw">Iron Ore<span class="rate">360/min</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Smelter ×12<span class="rate">360 ingots</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Plates ×8<span class="rate">150/min</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node final">RIP ×5<span class="rate">25/min</span></div>
+      </div>
+      <div class="flow">
+        <div class="flow-node raw">Copper Ore<span class="rate">360/min</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Smelter ×12<span class="rate">360 ingots</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Wire ×6<span class="rate">180/min</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node final">Cable ×3<span class="rate">~90/min</span></div>
+      </div>
+      <div class="flow">
+        <div class="flow-node raw">Coal Pur ×3<span class="rate">360/min</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Generators ×8<span class="rate">+600 MW</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node final">⚡ Réseau électrique</div>
+      </div>
+      <div class="flow">
+        <div class="flow-node raw">Coal Normal ×4<span class="rate">240/min</span></div>
+        <div class="flow-arrow">+</div>
+        <div class="flow-node raw">Iron ingots<span class="rate">(depuis F1)</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Foundry ×1<span class="rate">40 steel/min</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node final">Beams + Pipes</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">📐 Distances vérifiées (trigonométrie)</div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px;">
+    <table class="machine-table">
+      <thead><tr>
+        <th>Trajet</th><th>Distance (m)</th><th>Fondations</th><th>Priorité</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="machine-name">F1 Starter → F3 Hub Acier</td><td class="rate">342m</td><td class="count" style="--fcolor:var(--f3)">42,8</td><td><span class="badge badge-phase2">Phase 2</span></td></tr>
+        <tr><td class="machine-name">F3 Hub Acier → F2 Power</td><td class="rate">509m</td><td class="count" style="--fcolor:var(--f2)">63,7</td><td><span class="badge badge-phase2">Phase 2</span></td></tr>
+        <tr><td class="machine-name">F2 Power → Coal Normal E</td><td class="rate">670m</td><td class="count" style="--fcolor:var(--f2)">83,8</td><td><span class="badge badge-phase2">Phase 2</span></td></tr>
+        <tr><td class="machine-name">F2 Power → Coal Pur SE (bord)</td><td class="rate">53m</td><td class="count" style="--fcolor:var(--pure)">6,6</td><td><span class="badge badge-phase1">Immédiat</span></td></tr>
+        <tr><td class="machine-name">F3 Hub → Caterium Pur</td><td class="rate">62m</td><td class="count" style="--fcolor:var(--f3)">7,8</td><td><span class="badge badge-phase2">Phase 2</span></td></tr>
+        <tr><td class="machine-name">Circuit total F1→F3→F2</td><td class="rate">~2011m</td><td class="count" style="--fcolor:var(--f1)">251</td><td><span class="badge badge-optional">Total</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== F1 ==================== -->
+<div class="page" id="page-f1">
+  <div class="section-title">⚙️ F1 — STARTER HUB · Sud-Ouest · Phase 1 (immédiat)</div>
+
+  <div class="tip"><strong>Placement :</strong> Pose ta base sur la zone sableuse plate à droite/nord-est du cluster Iron/Copper/Limestone. Pas directement sur les nodes — laisse de l'espace pour les miners et les convoyeurs entrants.</div>
+
+  <div class="grid3" style="--fcolor:var(--f1)">
+    <div class="metric-card"><div class="card-label">Iron Ore input</div><div class="card-val">360/min</div><div class="card-sub">6 nodes normaux × 60</div></div>
+    <div class="metric-card"><div class="card-label">Copper Ore input</div><div class="card-val">360/min</div><div class="card-sub">6 nodes normaux × 60</div></div>
+    <div class="metric-card"><div class="card-label">Limestone input</div><div class="card-val">180/min</div><div class="card-sub">3 nodes normaux × 60</div></div>
+  </div>
+
+  <div class="section-title">🔩 CHAÎNE IRON</div>
+  <table class="machine-table">
+    <thead><tr><th class="checkbox"><input type="checkbox" onchange="toggleAll(this,'f1-iron')"></th><th>#</th><th>Machine</th><th>Recette</th><th>Output</th></tr></thead>
+    <tbody id="f1-iron">
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f1)">12×</td><td class="machine-name">Smelter</td><td class="machine-recipe">30 Iron Ore → 30 Iron Ingot/min</td><td class="rate">360 ingots/min</td></tr>
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f1)">8×</td><td class="machine-name">Constructor</td><td class="machine-recipe">30 Ingot → 20 Iron Plate/min</td><td class="rate">160 plates/min</td></tr>
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f1)">5×</td><td class="machine-name">Constructor</td><td class="machine-recipe">15 Ingot → 15 Iron Rod/min</td><td class="rate">75 rods/min</td></tr>
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f1)">8×</td><td class="machine-name">Constructor</td><td class="machine-recipe">10 Rod → 40 Screw/min</td><td class="rate">300 screws/min</td></tr>
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f1)">5×</td><td class="machine-name">Assembler</td><td class="machine-recipe">30 Plate + 60 Screw → 5 RIP/min</td><td class="rate" style="color:var(--f1);font-weight:700">25 RIP/min ⭐</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">🔌 CHAÎNE COPPER</div>
+  <table class="machine-table">
+    <thead><tr><th class="checkbox"><input type="checkbox" onchange="toggleAll(this,'f1-copper')"></th><th>#</th><th>Machine</th><th>Recette</th><th>Output</th></tr></thead>
+    <tbody id="f1-copper">
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f1)">12×</td><td class="machine-name">Smelter</td><td class="machine-recipe">30 Copper Ore → 30 Ingot/min</td><td class="rate">360 ingots/min</td></tr>
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f1)">8×</td><td class="machine-name">Constructor</td><td class="machine-recipe">15 Ingot → 30 Wire/min</td><td class="rate">240 wire/min</td></tr>
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f1)">4×</td><td class="machine-name">Constructor</td><td class="machine-recipe">60 Wire → 30 Cable/min</td><td class="rate" style="color:var(--f1);font-weight:700">120 cable/min ⭐</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">🪨 CHAÎNE LIMESTONE</div>
+  <table class="machine-table">
+    <thead><tr><th class="checkbox"><input type="checkbox" onchange="toggleAll(this,'f1-stone')"></th><th>#</th><th>Machine</th><th>Recette</th><th>Output</th></tr></thead>
+    <tbody id="f1-stone">
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f1)">4×</td><td class="machine-name">Constructor</td><td class="machine-recipe">45 Limestone → 15 Concrete/min</td><td class="rate">60 concrete/min</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn"><strong>⚠️ Ordre de build recommandé :</strong><br>
+  1. Miners sur tous les nodes → 2. Smelters Iron + Copper (24 total) → 3. Constructors plates + rods + screws → 4. Assemblers RIP → 5. Wire + Cable → 6. Limestone</div>
+
+  <div class="section-title">📊 Résumé F1</div>
+  <div class="grid3" style="--fcolor:var(--f1)">
+    <div class="metric-card"><div class="card-label">Total machines</div><div class="card-val">63</div><div class="card-sub">hors miners</div></div>
+    <div class="metric-card"><div class="card-label">Surface minimum</div><div class="card-val">~8 000m²</div><div class="card-sub">1000 fondations</div></div>
+    <div class="metric-card"><div class="card-label">Output clé</div><div class="card-val">25 RIP/min</div><div class="card-sub">Reinforced Iron Plates</div></div>
+  </div>
+</div>
+
+<!-- ==================== F2 ==================== -->
+<div class="page" id="page-f2">
+  <div class="section-title">⚡ F2 — POWER STATION · Sud-Est · Phase 1 (dès que Coal débloqué)</div>
+
+  <div class="tip"><strong>Placement :</strong> Pose la centrale au sud-ouest / ouest immédiat du cluster Coal Pur ×3, bord de l'eau. Distance node → factory : ~53m seulement. Tu vois l'eau depuis les nodes.</div>
+
+  <div class="grid3" style="--fcolor:var(--f2)">
+    <div class="metric-card"><div class="card-label">Coal Pur input</div><div class="card-val">360/min</div><div class="card-sub">3 nodes purs × 120</div></div>
+    <div class="metric-card"><div class="card-label">Power output</div><div class="card-val">600 MW</div><div class="card-sub">8 Coal Generators</div></div>
+    <div class="metric-card"><div class="card-label">Water</div><div class="card-val">360 m³/min</div><div class="card-sub">3–4 Water Extractors</div></div>
+  </div>
+
+  <div class="section-title">⚡ SETUP CENTRALE</div>
+  <table class="machine-table">
+    <thead><tr><th class="checkbox"><input type="checkbox" onchange="toggleAll(this,'f2-main')"></th><th>#</th><th>Machine</th><th>Recette</th><th>Output</th></tr></thead>
+    <tbody id="f2-main">
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f2)">3×</td><td class="machine-name">Miner Mk.1</td><td class="machine-recipe">Coal Pur × 3 nodes</td><td class="rate">360 coal/min</td></tr>
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f2)">4×</td><td class="machine-name">Water Extractor</td><td class="machine-recipe">→ 120 m³ chacun</td><td class="rate">480 m³/min</td></tr>
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f2)">8×</td><td class="machine-name">Coal Generator</td><td class="machine-recipe">45 coal + 45 m³ → 75 MW</td><td class="rate" style="color:var(--f2);font-weight:700">600 MW total ⭐</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip"><strong>💡 Conseil :</strong> Ici, tu ne produis <em>rien</em> d'industriel. Juste de l'énergie. Pas de Constructors, pas de Smelters. La puissance part vers le Power Grid global qui alimente F1 et F3.</div>
+
+  <div class="warn"><strong>⚠️ Ordre de build :</strong> Pose les Water Extractors en premier (bord de l'eau), puis les Coal Generators à côté, puis les Miners sur les 3 nodes. Connecte tout au Power Grid avant d'activer.</div>
+
+  <div class="section-title">📈 Évolution future F2</div>
+  <ul class="checklist">
+    <li><input type="checkbox"><div class="cl-label">Ajouter 2 Miners Mk.2 sur les nodes Purs quand débloqué</div><span class="cl-tag tag-soon">Phase 2</span></li>
+    <li><input type="checkbox"><div class="cl-label">Porter à 16 Coal Generators si besoin (1200 MW)</div><span class="cl-tag tag-soon">Phase 2</span></li>
+    <li><input type="checkbox"><div class="cl-label">Connecter le Coal Normal E par convoyeur vers F2 pour surplus</div><span class="cl-tag tag-later">Optionnel</span></li>
+    <li><input type="checkbox"><div class="cl-label">Ajouter Fuel Generators en mid-game (pétrole)</div><span class="cl-tag tag-later">Phase 3</span></li>
+  </ul>
+</div>
+
+<!-- ==================== F3 ==================== -->
+<div class="page" id="page-f3">
+  <div class="section-title">🔩 F3 — HUB ACIER · Centre-Sud · Phase 2 (Steel débloqué)</div>
+
+  <div class="tip"><strong>Placement :</strong> Juste au nord-ouest du Caterium Pur ×1 (62m). Cette position minimise le score logistique pondéré (9747) entre tous tes gros nodes — c'est mathématiquement le meilleur hub de ta carte pour le mid-game.</div>
+
+  <div class="grid3" style="--fcolor:var(--f3)">
+    <div class="metric-card"><div class="card-label">Iron input (F1→F3)</div><div class="card-val">~60/min</div><div class="card-sub">export depuis F1</div></div>
+    <div class="metric-card"><div class="card-label">Coal Normal E</div><div class="card-val">240/min</div><div class="card-sub">4 nodes × 60</div></div>
+    <div class="metric-card"><div class="card-label">Steel Ingots</div><div class="card-val">~40/min</div><div class="card-sub">1 Foundry au départ</div></div>
+  </div>
+
+  <div class="section-title">⚙️ CHAÎNE ACIER</div>
+  <table class="machine-table">
+    <thead><tr><th class="checkbox"><input type="checkbox" onchange="toggleAll(this,'f3-steel')"></th><th>#</th><th>Machine</th><th>Recette</th><th>Output</th></tr></thead>
+    <tbody id="f3-steel">
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f3)">4×</td><td class="machine-name">Miner Mk.1</td><td class="machine-recipe">Coal Normal E × 4 nodes</td><td class="rate">240 coal/min</td></tr>
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f3)">1×</td><td class="machine-name">Foundry</td><td class="machine-recipe">45 Iron + 45 Coal → 30 Steel Ingot/min</td><td class="rate">40 steel/min (avec 2x Foundry)</td></tr>
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f3)">2×</td><td class="machine-name">Constructor</td><td class="machine-recipe">4 Steel Ingot → 1 Steel Beam/min</td><td class="rate">~5 beams/min</td></tr>
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--f3)">3×</td><td class="machine-name">Constructor</td><td class="machine-recipe">3 Steel Ingot → 2 Steel Pipe/min</td><td class="rate">~13 pipes/min</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">⚡ CHAÎNE CATERIUM (bonus)</div>
+  <table class="machine-table">
+    <thead><tr><th class="checkbox"><input type="checkbox" onchange="toggleAll(this,'f3-cat')"></th><th>#</th><th>Machine</th><th>Recette</th><th>Output</th></tr></thead>
+    <tbody id="f3-cat">
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--pure)">1×</td><td class="machine-name">Miner Mk.1</td><td class="machine-recipe">Caterium Pur × 1 node</td><td class="rate">120 cat ore/min</td></tr>
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--pure)">3×</td><td class="machine-name">Smelter</td><td class="machine-recipe">3 ore → 1 Caterium Ingot/min</td><td class="rate">40 ingots/min</td></tr>
+      <tr><td class="checkbox"><input type="checkbox" onchange="toggleRow(this)"></td><td class="count" style="--fcolor:var(--pure)">2×</td><td class="machine-name">Constructor</td><td class="machine-recipe">5 ingot → 15 Quickwire/min</td><td class="rate" style="color:var(--pure)">~120 quickwire/min</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">📈 Évolution F3 → mid-game</div>
+  <ul class="checklist">
+    <li><input type="checkbox"><div class="cl-label">Assemblers Encased Industrial Beam (Steel Beam + Concrete)</div><span class="cl-tag tag-soon">Phase 2</span></li>
+    <li><input type="checkbox"><div class="cl-label">Stator = Steel Pipe + Wire (depuis F1)</div><span class="cl-tag tag-soon">Phase 2</span></li>
+    <li><input type="checkbox"><div class="cl-label">Motor = Rotor + Stator</div><span class="cl-tag tag-later">Phase 3</span></li>
+    <li><input type="checkbox"><div class="cl-label">Modular Frame = Reinforced Iron Plate + Iron Rod</div><span class="cl-tag tag-later">Phase 3</span></li>
+    <li><input type="checkbox"><div class="cl-label">AI Limiter (Quickwire + Copper Sheet)</div><span class="cl-tag tag-later">Phase 3</span></li>
+  </ul>
+</div>
+
+<!-- ==================== CHECKLIST ==================== -->
+<div class="page" id="page-checklist">
+  <div class="section-title">✅ CHECKLIST COMPLÈTE — Early Game</div>
+
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px">
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:14px">Phase 1 — Les fondations (jour 1-2)</div>
+    <ul class="checklist" style="--fcolor:var(--f1)">
+      <li><input type="checkbox"><div class="cl-label">HUB posé au SW, sur la zone plate à droite du cluster Iron/Copper</div><span class="cl-tag tag-now">Maintenant</span></li>
+      <li><input type="checkbox"><div class="cl-label">Miners Mk.1 sur les 6 nodes Iron + 6 nodes Copper + 3 Limestone</div><span class="cl-tag tag-now">Maintenant</span></li>
+      <li><input type="checkbox"><div class="cl-label">12 Smelters Iron + 12 Smelters Copper actifs</div><span class="cl-tag tag-now">Maintenant</span></li>
+      <li><input type="checkbox"><div class="cl-label">Constructors Iron Plate (×8) + Iron Rod (×5) + Screw (×8)</div><span class="cl-tag tag-now">Maintenant</span></li>
+      <li><input type="checkbox"><div class="cl-label">5 Assemblers Reinforced Iron Plate actifs → 25 RIP/min</div><span class="cl-tag tag-now">Maintenant</span></li>
+      <li><input type="checkbox"><div class="cl-label">Wire + Cable (×8 + ×4 Constructors)</div><span class="cl-tag tag-now">Maintenant</span></li>
+      <li><input type="checkbox"><div class="cl-label">4 Constructors Concrete depuis Limestone</div><span class="cl-tag tag-now">Maintenant</span></li>
+      <li><input type="checkbox"><div class="cl-label">Partir explorer vers le SE pour localiser Coal Pur ×3 exactement</div><span class="cl-tag tag-now">Maintenant</span></li>
+    </ul>
+  </div>
+
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px">
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:14px">Phase 1b — Énergie (dès que Coal débloqué)</div>
+    <ul class="checklist" style="--fcolor:var(--f2)">
+      <li><input type="checkbox"><div class="cl-label">F2 placée au bord de l'eau, ~53m ouest des Coal Purs</div><span class="cl-tag tag-now">Maintenant</span></li>
+      <li><input type="checkbox"><div class="cl-label">4 Water Extractors posés sur le bord de l'eau</div><span class="cl-tag tag-now">Maintenant</span></li>
+      <li><input type="checkbox"><div class="cl-label">3 Miners Mk.1 sur les 3 Coal Purs</div><span class="cl-tag tag-now">Maintenant</span></li>
+      <li><input type="checkbox"><div class="cl-label">8 Coal Generators connectés (coal + eau) → 600 MW</div><span class="cl-tag tag-now">Maintenant</span></li>
+      <li><input type="checkbox"><div class="cl-label">Câble de puissance tiré depuis F2 → F1 (Power Line)</div><span class="cl-tag tag-now">Maintenant</span></li>
+    </ul>
+  </div>
+
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px">
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:14px">Phase 2 — Acier et mid-game (après avoir complété Phase 1)</div>
+    <ul class="checklist" style="--fcolor:var(--f3)">
+      <li><input type="checkbox"><div class="cl-label">Débloquer Steel dans l'arbre de recherche (M.A.M. + HUB)</div><span class="cl-tag tag-soon">Bientôt</span></li>
+      <li><input type="checkbox"><div class="cl-label">F3 placée NW du Caterium Pur, ~62m du node</div><span class="cl-tag tag-soon">Bientôt</span></li>
+      <li><input type="checkbox"><div class="cl-label">4 Miners Mk.1 sur les 4 nodes Coal Normal Est</div><span class="cl-tag tag-soon">Bientôt</span></li>
+      <li><input type="checkbox"><div class="cl-label">Convoyeur Iron ingots F1 → F3 (341m / ~43 fondations de convoyeur)</div><span class="cl-tag tag-soon">Bientôt</span></li>
+      <li><input type="checkbox"><div class="cl-label">2 Foundries actives → ~40 steel ingots/min</div><span class="cl-tag tag-soon">Bientôt</span></li>
+      <li><input type="checkbox"><div class="cl-label">Constructors Steel Beam + Steel Pipe</div><span class="cl-tag tag-soon">Bientôt</span></li>
+      <li><input type="checkbox"><div class="cl-label">Miner Caterium Pur + Smelters + Constructors Quickwire</div><span class="cl-tag tag-soon">Bientôt</span></li>
+    </ul>
+  </div>
+
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px">
+    <div style="font-size:0.8rem;color:var(--muted);margin-bottom:14px">À NE PAS faire en early game</div>
+    <ul class="checklist">
+      <li><input type="checkbox" disabled><div class="cl-label" style="color:var(--muted);text-decoration:line-through">Aller au Coal Normal NW (trop loin, 634m depuis SW)</div><span class="cl-tag tag-later">Skip</span></li>
+      <li><input type="checkbox" disabled><div class="cl-label" style="color:var(--muted);text-decoration:line-through">Se focus sur Sulfur / SAM / Quartz</div><span class="cl-tag tag-later">Skip</span></li>
+      <li><input type="checkbox" disabled><div class="cl-label" style="color:var(--muted);text-decoration:line-through">Mettre une méga-base au "centre géométrique" de la carte</div><span class="cl-tag tag-later">Skip</span></li>
+    </ul>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ============================================================
+// WORLD MAP — canvas drawing
+// Positions calées sur le screenshot original (1386×868px → canvas)
+// Echelle: 1px original ≈ 1.47m → 1 fondation = 8m
+// ============================================================
+(function initWorldMap() {
+  const canvas = document.getElementById('worldMap');
+  if (!canvas) return;
+
+  // Terrain data: polygon zones [normalized 0-1 coords] → color
+  // Normalized from original 1386x868 screenshot
+  const TERRAIN_ZONES = [
+    // Eau gauche
+    { pts:[[0,0.05],[0.06,0],[0.08,0.55],[0.03,0.6],[0,0.6]], color:'#1a3a5c', label:'water' },
+    { pts:[[0,0.6],[0.03,0.6],[0.06,0.75],[0.12,0.85],[0.08,1],[0,1]], color:'#1a3a5c', label:'water' },
+    // Eau bas droite
+    { pts:[[0.65,0.82],[0.72,0.78],[0.85,0.85],[0.95,0.82],[1,0.88],[1,1],[0.65,1]], color:'#1a3a5c', label:'water' },
+    // Rocky NW/N (gris foncé)
+    { pts:[[0.06,0],[0.55,0],[0.62,0.08],[0.65,0.2],[0.55,0.3],[0.42,0.28],[0.3,0.35],[0.18,0.35],[0.08,0.25],[0.08,0.1]], color:'#2a2830', label:'rock' },
+    { pts:[[0.62,0.08],[0.85,0],[1,0],[1,0.15],[0.88,0.2],[0.75,0.18],[0.68,0.1]], color:'#2a2830', label:'rock' },
+    // Rocky NE (gris)
+    { pts:[[0.75,0.18],[0.88,0.2],[1,0.15],[1,0.35],[0.92,0.4],[0.82,0.35],[0.78,0.25]], color:'#252230', label:'rock2' },
+    // Rocky centre (falaises)
+    { pts:[[0.3,0.35],[0.42,0.28],[0.55,0.3],[0.58,0.42],[0.52,0.5],[0.38,0.5],[0.28,0.48],[0.22,0.42]], color:'#332d3a', label:'rock3' },
+    // Sable/désert central (tan/beige)
+    { pts:[[0.08,0.25],[0.18,0.35],[0.28,0.48],[0.38,0.5],[0.52,0.5],[0.58,0.42],[0.65,0.45],[0.72,0.55],[0.65,0.62],[0.55,0.65],[0.42,0.62],[0.3,0.58],[0.2,0.52],[0.1,0.45],[0.08,0.35]], color:'#4a3d28', label:'sand' },
+    // Désert SW
+    { pts:[[0.1,0.45],[0.2,0.52],[0.3,0.58],[0.35,0.72],[0.3,0.88],[0.2,0.95],[0.1,0.88],[0.06,0.75],[0.03,0.6]], color:'#3d3020', label:'sand2' },
+    // Désert bas centre
+    { pts:[[0.3,0.58],[0.42,0.62],[0.55,0.65],[0.65,0.62],[0.72,0.55],[0.75,0.65],[0.72,0.78],[0.65,0.82],[0.5,0.85],[0.38,0.82],[0.3,0.88],[0.3,0.58]], color:'#3a2d1c', label:'sand3' },
+    // Forêt droite (vert sombre)
+    { pts:[[0.82,0.35],[0.92,0.4],[1,0.35],[1,0.88],[0.95,0.82],[0.85,0.85],[0.75,0.65],[0.72,0.55],[0.65,0.45],[0.72,0.35],[0.78,0.25]], color:'#1a3320', label:'forest' },
+    // Forêt NE bord
+    { pts:[[0.88,0.2],[1,0.15],[1,0],[0.85,0]], color:'#233d28', label:'forest2' },
+    // Petite eau intérieure (lac central)
+    { pts:[[0.35,0.52],[0.42,0.5],[0.48,0.56],[0.42,0.62],[0.35,0.58]], color:'#1a4060', label:'lake' },
+    // Petite eau SW
+    { pts:[[0.15,0.65],[0.22,0.62],[0.25,0.7],[0.18,0.75],[0.12,0.72]], color:'#1a4060', label:'lake2' },
+  ];
+
+  // Resource nodes — positions normalisées depuis le screenshot
+  // format: { id, nx, ny, label, sublabel, type, color, purity, note }
+  const NODES = [
+    // === CLUSTER SW (Iron x6, Copper x6, Limestone x3) ===
+    // Iron x6
+    { id:'iron1', nx:0.19, ny:0.82, label:'Iron', type:'iron', color:'#cc7733', purity:'normal' },
+    { id:'iron2', nx:0.21, ny:0.85, label:'Iron', type:'iron', color:'#cc7733', purity:'normal' },
+    { id:'iron3', nx:0.23, ny:0.87, label:'Iron', type:'iron', color:'#cc7733', purity:'normal' },
+    { id:'iron4', nx:0.25, ny:0.84, label:'Iron', type:'iron', color:'#cc7733', purity:'normal' },
+    { id:'iron5', nx:0.22, ny:0.88, label:'Iron', type:'iron', color:'#cc7733', purity:'normal' },
+    { id:'iron6', nx:0.26, ny:0.87, label:'Iron', type:'iron', color:'#cc7733', purity:'normal' },
+    // Copper x6
+    { id:'cop1', nx:0.21, ny:0.77, label:'Copper', type:'copper', color:'#cc5522', purity:'normal' },
+    { id:'cop2', nx:0.23, ny:0.75, label:'Copper', type:'copper', color:'#cc5522', purity:'normal' },
+    { id:'cop3', nx:0.25, ny:0.77, label:'Copper', type:'copper', color:'#cc5522', purity:'normal' },
+    { id:'cop4', nx:0.22, ny:0.72, label:'Copper', type:'copper', color:'#cc5522', purity:'normal' },
+    { id:'cop5', nx:0.24, ny:0.73, label:'Copper', type:'copper', color:'#cc5522', purity:'normal' },
+    { id:'cop6', nx:0.26, ny:0.74, label:'Copper', type:'copper', color:'#cc5522', purity:'normal' },
+    // Limestone x3
+    { id:'lim1', nx:0.16, ny:0.87, label:'Limestone', type:'limestone', color:'#aaa077', purity:'normal' },
+    { id:'lim2', nx:0.18, ny:0.89, label:'Limestone', type:'limestone', color:'#aaa077', purity:'normal' },
+    { id:'lim3', nx:0.17, ny:0.91, label:'Limestone', type:'limestone', color:'#aaa077', purity:'normal' },
+    // === COAL NORMAL NW x2 ===
+    { id:'coalNW1', nx:0.18, ny:0.15, label:'Coal', type:'coal', color:'#555', purity:'normal' },
+    { id:'coalNW2', nx:0.2,  ny:0.17, label:'Coal', type:'coal', color:'#555', purity:'normal' },
+    // === COAL NORMAL E x4 ===
+    { id:'coalE1', nx:0.74, ny:0.28, label:'Coal', type:'coal', color:'#555', purity:'normal' },
+    { id:'coalE2', nx:0.76, ny:0.29, label:'Coal', type:'coal', color:'#555', purity:'normal' },
+    { id:'coalE3', nx:0.75, ny:0.31, label:'Coal', type:'coal', color:'#555', purity:'normal' },
+    { id:'coalE4', nx:0.77, ny:0.31, label:'Coal', type:'coal', color:'#555', purity:'normal' },
+    // === COAL PUR SE x3 ===
+    { id:'coalSE1', nx:0.735, ny:0.78, label:'Coal Pur', type:'coal', color:'#00e5ff', purity:'pure' },
+    { id:'coalSE2', nx:0.755, ny:0.80, label:'Coal Pur', type:'coal', color:'#00e5ff', purity:'pure' },
+    { id:'coalSE3', nx:0.745, ny:0.82, label:'Coal Pur', type:'coal', color:'#00e5ff', purity:'pure' },
+    // === CATERIUM PUR x1 ===
+    { id:'cat1', nx:0.50, ny:0.635, label:'Caterium Pur', type:'caterium', color:'#ffd700', purity:'pure' },
+    // Autres nodes visibles sur la map (secondaires)
+    { id:'misc1', nx:0.39, ny:0.27, label:'Ressource', type:'misc', color:'#886644', purity:'normal' },
+    { id:'misc2', nx:0.41, ny:0.23, label:'Ressource', type:'misc', color:'#886644', purity:'normal' },
+    { id:'misc3', nx:0.28, ny:0.32, label:'Ressource', type:'misc', color:'#886644', purity:'normal' },
+    { id:'misc4', nx:0.35, ny:0.4,  label:'Ressource', type:'misc', color:'#886644', purity:'normal' },
+    { id:'misc5', nx:0.46, ny:0.41, label:'Ressource', type:'misc', color:'#886644', purity:'normal' },
+    { id:'misc6', nx:0.52, ny:0.43, label:'Ressource', type:'misc', color:'#886644', purity:'normal' },
+    { id:'misc7', nx:0.55, ny:0.38, label:'Ressource', type:'misc', color:'#886644', purity:'normal' },
+    { id:'misc8', nx:0.64, ny:0.46, label:'Ressource', type:'misc', color:'#886644', purity:'normal' },
+    { id:'misc9', nx:0.67, ny:0.38, label:'Ressource', type:'misc', color:'#886644', purity:'normal' },
+    { id:'misc10', nx:0.58, ny:0.6, label:'Ressource', type:'misc', color:'#886644', purity:'normal' },
+    // Nœuds verts visibles sur la map originale (resources en cercles verts)
+    { id:'g1', nx:0.175, ny:0.05, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g2', nx:0.185, ny:0.07, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g3', nx:0.27, ny:0.19, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g4', nx:0.42, ny:0.19, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g5', nx:0.31, ny:0.24, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g6', nx:0.37, ny:0.31, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g7', nx:0.43, ny:0.36, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g8', nx:0.38, ny:0.44, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g9', nx:0.5, ny:0.58, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g10', nx:0.56, ny:0.72, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g11', nx:0.6, ny:0.73, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g12', nx:0.88, ny:0.2, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g13', nx:0.92, ny:0.22, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g14', nx:0.95, ny:0.24, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g15', nx:0.93, ny:0.28, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g16', nx:0.86, ny:0.4, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    { id:'g17', nx:0.9, ny:0.5, label:'Ressource', type:'green', color:'#3da84a', purity:'normal' },
+    // Quartz/SAM violet (visibles sur la map)
+    { id:'qtz1', nx:0.49, ny:0.26, label:'Quartz/SAM', type:'quartz', color:'#cc44cc', purity:'pure' },
+    { id:'qtz2', nx:0.51, ny:0.28, label:'Quartz/SAM', type:'quartz', color:'#cc44cc', purity:'pure' },
+  ];
+
+  // Clusters (zone de label)
+  const CLUSTERS = [
+    { nx:0.22, ny:0.83, label:'Iron Normal ×6', color:'#cc7733' },
+    { nx:0.23, ny:0.74, label:'Copper Normal ×6', color:'#cc5522' },
+    { nx:0.17, ny:0.88, label:'Limestone Normal ×3', color:'#aaa077' },
+    { nx:0.19, ny:0.16, label:'Coal Normal ×2', color:'#888', small:true },
+    { nx:0.76, ny:0.30, label:'Coal Normal ×4', color:'#888' },
+    { nx:0.745, ny:0.80, label:'Coal Pur ×3', color:'#00e5ff' },
+    { nx:0.50, ny:0.63, label:'Caterium Pur ×1', color:'#ffd700' },
+  ];
+
+  // Factories
+  const FACTORIES = [
+    {
+      id:'F1', nx:0.22, ny:0.80, label:'F1', sublabel:'Starter Hub',
+      color:'#f5a623', icon:'⚙️',
+      info:'<strong style="color:#f5a623">F1 — Starter Hub SW</strong><br>Iron ×6 / Copper ×6 / Limestone ×3<br>→ 25 RIP/min + 120 Cable/min<br>63 machines au total<br><em>Phase 1 — immédiat</em>'
+    },
+    {
+      id:'F2', nx:0.735, ny:0.775, label:'F2', sublabel:'Power',
+      color:'#ff4757', icon:'⚡',
+      info:'<strong style="color:#ff4757">F2 — Power Station SE</strong><br>Coal Pur ×3 + Eau<br>→ 8 Coal Generators = 600 MW<br>53m des nodes<br><em>Phase 1 — dès Coal débloqué</em>'
+    },
+    {
+      id:'F3', nx:0.47, ny:0.60, label:'F3', sublabel:'Hub Acier',
+      color:'#2ed573', icon:'🔩',
+      info:'<strong style="color:#2ed573">F3 — Hub Acier Centre-Sud</strong><br>Caterium Pur (62m) + Coal E (427m)<br>→ Steel Ingots + Quickwire<br>Score hub pondéré: 9747 (optimal)<br><em>Phase 2 — après Steel débloqué</em>'
+    },
+  ];
+
+  // Original circuit waypoints (white dots + red lines de la map)
+  // Ces points sont les waypoints mesurés sur ta map originale
+  const CIRCUIT_WP = [
+    { nx:0.22, ny:0.87, label:'280m\n35 fond.' },       // SW anchor
+    { nx:0.405, ny:0.295, label:'1.25km\n156 fond.' },   // centre-nord
+    { nx:0.745, ny:0.30, label:'957m\n119 fond.' },      // Coal E anchor
+    { nx:0.745, ny:0.81, label:'1.47km\n183 fond.' },    // Coal Pur SE anchor
+    { nx:0.51, ny:0.64, label:'890m\n111 fond.' },       // Caterium anchor
+    { nx:0.22, ny:0.87, label:'' },                      // retour SW (ferme le circuit)
+  ];
+
+  // Segments du circuit original avec distances
+  const CIRCUIT_SEGS = [
+    { from:0, to:1, dist:'1.63km', fond:'203' },
+    { from:1, to:2, dist:'1.25km', fond:'156' },
+    { from:2, to:3, dist:'1.69km', fond:'211' },
+    { from:3, to:4, dist:'1.47km', fond:'183' },
+    { from:4, to:0, dist:'890m',   fond:'111' },
+  ];
+
+  // Factory connections
+  const FAC_LINES = [
+    { from:'F1', to:'F3', color:'#f5a62388', dash:[6,4], label:'Iron export' },
+    { from:'F3', to:'F2', color:'#ff475788', dash:[6,4], label:'Électricité' },
+    { from:'F1', to:'F2', color:'#ff475755', dash:[4,6], label:'' },
+    { from:'F3', to:'cat1', color:'#ffd70066', dash:[3,5], label:'' },
+    { from:'F2', to:'coalSE1', color:'#00e5ff55', dash:[3,5], label:'' },
+  ];
+
+  let hovered = null;
+  let pulseT = 0;
+
+  // Layer toggles
+  const layerMeasures = document.getElementById('layerMeasures');
+  const layerCircuit  = document.getElementById('layerCircuit');
+  const layerLabels   = document.getElementById('layerLabels');
+  [layerMeasures, layerCircuit, layerLabels].forEach(el => {
+    if (el) el.addEventListener('change', drawMap);
+  });
+
+  function getW() { return canvas.clientWidth; }
+  function getH() { return canvas.clientHeight; }
+
+  function px(nx, ny) {
+    return { x: nx * getW(), y: ny * getH() };
+  }
+  function nodePos(id) {
+    const n = NODES.find(n => n.id === id);
+    if (n) return px(n.nx, n.ny);
+    const f = FACTORIES.find(f => f.id === id);
+    if (f) return px(f.nx, f.ny);
+    return null;
+  }
+
+  function drawMap() {
+    const W = canvas.width = canvas.clientWidth;
+    const H = canvas.height = canvas.clientHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,W,H);
+
+    // --- TERRAIN ---
+    for (const zone of TERRAIN_ZONES) {
+      ctx.beginPath();
+      const first = zone.pts[0];
+      ctx.moveTo(first[0]*W, first[1]*H);
+      for (let i=1; i<zone.pts.length; i++) {
+        ctx.lineTo(zone.pts[i][0]*W, zone.pts[i][1]*H);
+      }
+      ctx.closePath();
+      ctx.fillStyle = zone.color;
+      ctx.fill();
+    }
+
+    // Subtle grid overlay
+    ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+    ctx.lineWidth = 0.5;
+    const step = Math.min(W,H) / 20;
+    for (let x=0; x<W; x+=step) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for (let y=0; y<H; y+=step) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    // --- CIRCUIT ORIGINAL (mesures) ---
+    if (layerMeasures?.checked !== false) {
+      ctx.save();
+      ctx.setLineDash([5,4]);
+      ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      const p0 = px(CIRCUIT_WP[0].nx, CIRCUIT_WP[0].ny);
+      ctx.moveTo(p0.x, p0.y);
+      for (let i=1; i<CIRCUIT_WP.length; i++) {
+        const pp = px(CIRCUIT_WP[i].nx, CIRCUIT_WP[i].ny);
+        ctx.lineTo(pp.x, pp.y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Waypoints blancs
+      for (const wp of CIRCUIT_WP.slice(0,-1)) {
+        const p = px(wp.nx, wp.ny);
+        ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+        ctx.fillStyle = '#fff'; ctx.fill();
+        ctx.strokeStyle = '#00000066'; ctx.lineWidth = 1; ctx.stroke();
+      }
+
+      // Labels distances (segment milieu)
+      if (layerLabels?.checked !== false) {
+        ctx.font = 'bold 9px Segoe UI';
+        ctx.textAlign = 'center';
+        for (const seg of CIRCUIT_SEGS) {
+          const a = CIRCUIT_WP[seg.from], b = CIRCUIT_WP[seg.to];
+          const mx = (a.nx+b.nx)/2, my = (a.ny+b.ny)/2;
+          const mp = px(mx, my);
+          const label = seg.dist + ' / ' + seg.fond + 'f';
+          const tw = ctx.measureText(label).width;
+          ctx.fillStyle = 'rgba(0,0,0,0.72)';
+          ctx.fillRect(mp.x - tw/2 - 4, mp.y - 10, tw+8, 15);
+          ctx.fillStyle = '#e0e0e0';
+          ctx.fillText(label, mp.x, mp.y + 2);
+        }
+      }
+      ctx.restore();
+    }
+
+    // --- FACTORY LINES ---
+    if (layerCircuit?.checked !== false) {
+      ctx.save();
+      for (const fl of FAC_LINES) {
+        const pa = nodePos(fl.from) || (() => { const f=FACTORIES.find(x=>x.id===fl.from); return f?px(f.nx,f.ny):null; })();
+        const pb = nodePos(fl.to)   || (() => { const f=FACTORIES.find(x=>x.id===fl.to);   return f?px(f.nx,f.ny):null; })();
+        if (!pa || !pb) continue;
+        ctx.beginPath();
+        ctx.setLineDash(fl.dash);
+        ctx.strokeStyle = fl.color;
+        ctx.lineWidth = 2;
+        ctx.moveTo(pa.x, pa.y);
+        ctx.lineTo(pb.x, pb.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Arrow
+        const angle = Math.atan2(pb.y-pa.y, pb.x-pa.x);
+        const mx = (pa.x+pb.x)/2, my = (pa.y+pb.y)/2;
+        ctx.save();
+        ctx.translate(mx, my);
+        ctx.rotate(angle);
+        ctx.fillStyle = fl.color;
+        ctx.beginPath();
+        ctx.moveTo(6,0); ctx.lineTo(-4,-4); ctx.lineTo(-4,4); ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+
+        if (fl.label && layerLabels?.checked !== false) {
+          ctx.font = '9px Segoe UI';
+          ctx.textAlign = 'center';
+          const tw = ctx.measureText(fl.label).width;
+          ctx.fillStyle = 'rgba(0,0,0,0.6)';
+          ctx.fillRect(mx-tw/2-3, my-9, tw+6, 13);
+          ctx.fillStyle = fl.color;
+          ctx.fillText(fl.label, mx, my+1);
+        }
+      }
+      ctx.restore();
+    }
+
+    // --- RESOURCE NODES ---
+    const pulse = 0.7 + 0.3 * Math.sin(pulseT * 0.04);
+
+    for (const node of NODES) {
+      const p = px(node.nx, node.ny);
+      const isHov = hovered && hovered.id === node.id;
+      const isMisc = node.type === 'misc' || node.type === 'green';
+      const r = isMisc ? 5 : (node.purity === 'pure' ? 7 : 6);
+      const rr = isHov ? r+3 : r;
+
+      if (isMisc) {
+        // Petit cercle simple pour les nodes secondaires
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, rr, 0, Math.PI*2);
+        ctx.fillStyle = node.color + '55';
+        ctx.fill();
+        ctx.strokeStyle = node.color + 'aa';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      } else {
+        // Outer ring glow pour nodes importants
+        if (node.purity === 'pure') {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, rr+4, 0, Math.PI*2);
+          ctx.fillStyle = node.color + (isHov ? '33' : '18');
+          ctx.fill();
+        }
+        // Main circle
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, rr, 0, Math.PI*2);
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fill();
+        ctx.strokeStyle = node.color;
+        ctx.lineWidth = node.purity === 'pure' ? (isHov ? 3 : 2.5) : (isHov ? 2.5 : 2);
+        ctx.stroke();
+        // Inner dot
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, rr * 0.4, 0, Math.PI*2);
+        ctx.fillStyle = node.color;
+        ctx.fill();
+      }
+    }
+
+    // --- FACTORIES ---
+    for (const fac of FACTORIES) {
+      const p = px(fac.nx, fac.ny);
+      const isHov = hovered && hovered.id === fac.id;
+      const size = isHov ? 16 : 13;
+
+      // Glow zone
+      const grad = ctx.createRadialGradient(p.x,p.y,0, p.x,p.y, 50);
+      grad.addColorStop(0, fac.color + (isHov?'44':'28'));
+      grad.addColorStop(1, fac.color + '00');
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 50, 0, Math.PI*2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Pulsing ring
+      if (isHov) {
+        const pr = 22 + 4 * pulse;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, pr, 0, Math.PI*2);
+        ctx.strokeStyle = fac.color + '88';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4,3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Square badge
+      ctx.save();
+      ctx.shadowColor = fac.color;
+      ctx.shadowBlur = isHov ? 14 : 6;
+      ctx.fillStyle = fac.color + '33';
+      ctx.strokeStyle = fac.color;
+      ctx.lineWidth = isHov ? 2.5 : 2;
+      ctx.beginPath();
+      ctx.roundRect(p.x-size, p.y-size, size*2, size*2, 4);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+
+      // Icon
+      ctx.font = `${size*1.2}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(fac.icon, p.x, p.y);
+      ctx.textBaseline = 'alphabetic';
+
+      if (layerLabels?.checked !== false) {
+        ctx.font = `bold 10px Segoe UI`;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = fac.color;
+        ctx.fillText(fac.label, p.x, p.y - size - 4);
+        ctx.font = '8px Segoe UI';
+        ctx.fillStyle = '#ccc';
+        ctx.fillText(fac.sublabel, p.x, p.y + size + 11);
+      }
+    }
+
+    // --- CLUSTER LABELS ---
+    if (layerLabels?.checked !== false) {
+      for (const cl of CLUSTERS) {
+        const p = px(cl.nx, cl.ny);
+        ctx.font = cl.small ? '8px Segoe UI' : '9.5px Segoe UI';
+        ctx.textAlign = 'left';
+        const tw = ctx.measureText(cl.label).width;
+        ctx.fillStyle = 'rgba(0,0,0,0.75)';
+        ctx.fillRect(p.x+10, p.y-9, tw+8, 14);
+        ctx.fillStyle = cl.color;
+        ctx.fillText(cl.label, p.x+14, p.y+2);
+        // small connector line
+        ctx.strokeStyle = cl.color + '88';
+        ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.moveTo(p.x+2,p.y); ctx.lineTo(p.x+10,p.y); ctx.stroke();
+      }
+    }
+
+    // --- COMPASS ---
+    ctx.font = 'bold 11px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#f5a623';
+    ctx.fillText('N ↑', 10, 20);
+
+    // --- SCALE BAR ---
+    // 400m = 400/1386 ≈ 28.9% of width
+    const sbLen = W * (400/1386);
+    const sbX = 14, sbY = H - 18;
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(sbX-4, sbY-11, sbLen+30, 18);
+    ctx.strokeStyle = '#f5a623';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(sbX, sbY); ctx.lineTo(sbX+sbLen, sbY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(sbX, sbY-4); ctx.lineTo(sbX, sbY+4); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(sbX+sbLen, sbY-4); ctx.lineTo(sbX+sbLen, sbY+4); ctx.stroke();
+    ctx.font = '9px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#f5a623';
+    ctx.fillText('400m', sbX+sbLen+4, sbY+3);
+
+    pulseT++;
+  }
+
+  // --- HOVER ---
+  canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const W = canvas.width, H = canvas.height;
+
+    let found = null;
+    // Check factories first
+    for (const fac of FACTORIES) {
+      const p = px(fac.nx, fac.ny);
+      if (Math.hypot(mx-p.x, my-p.y) < 22) { found = fac; break; }
+    }
+    // Then nodes
+    if (!found) {
+      for (const node of NODES) {
+        if (node.type === 'misc' || node.type === 'green') continue; // ignore secondaires
+        const p = px(node.nx, node.ny);
+        if (Math.hypot(mx-p.x, my-p.y) < 14) { found = node; break; }
+      }
+    }
+
+    hovered = found;
+    canvas.style.cursor = found ? 'pointer' : 'default';
+
+    const info = document.getElementById('nodeInfo');
+    if (found) {
+      if (found.info) {
+        info.innerHTML = found.info;
+        info.style.fontStyle = 'normal';
+        info.style.color = '#ccc';
+      } else {
+        const purity = found.purity === 'pure' ? '<span style="color:#00e5ff">● Pure</span>' : '● Normal';
+        info.innerHTML = `<strong>${found.label}</strong><br>${purity}<br><span style="color:var(--muted);font-size:0.7rem">Pos: ${(found.nx*100).toFixed(0)}% / ${(found.ny*100).toFixed(0)}%</span>`;
+        info.style.fontStyle = 'normal';
+        info.style.color = '#ccc';
+      }
+    } else {
+      info.innerHTML = 'Survole un élément sur la carte';
+      info.style.fontStyle = 'italic';
+      info.style.color = 'var(--muted)';
+    }
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    hovered = null;
+    const info = document.getElementById('nodeInfo');
+    info.innerHTML = 'Survole un élément sur la carte';
+    info.style.fontStyle = 'italic';
+    info.style.color = 'var(--muted)';
+  });
+
+  // Animate (for pulse effect on hover)
+  function loop() {
+    drawMap();
+    requestAnimationFrame(loop);
+  }
+
+  // Resize observer
+  const ro = new ResizeObserver(() => drawMap());
+  ro.observe(canvas);
+
+  loop();
+})();
+
+function switchTab(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function toggleRow(cb) {
+  const row = cb.closest('tr');
+  row.classList.toggle('checked', cb.checked);
+  // update parent checkbox
+  const tbody = cb.closest('tbody');
+  const all = tbody.querySelectorAll('tr input[type=checkbox]');
+  const thead = document.querySelector(`[onchange*="'${tbody.id}'"]`);
+  if (thead) {
+    const checkedCount = [...all].filter(c => c.checked).length;
+    thead.indeterminate = checkedCount > 0 && checkedCount < all.length;
+    thead.checked = checkedCount === all.length;
+  }
+}
+
+function toggleAll(masterCb, tbodyId) {
+  const tbody = document.getElementById(tbodyId);
+  tbody.querySelectorAll('input[type=checkbox]').forEach(cb => {
+    cb.checked = masterCb.checked;
+    cb.closest('tr').classList.toggle('checked', masterCb.checked);
+  });
+}
+
+// Persist checkboxes in sessionStorage
+document.addEventListener('change', (e) => {
+  if (e.target.type === 'checkbox') {
+    const key = e.target.id || btoa(e.target.closest('td,li')?.textContent?.slice(0,30) || Math.random());
+    try { sessionStorage.setItem('cb_' + key, e.target.checked); } catch(err) {}
+  }
+});
+</script>
+</body>
+</html>
